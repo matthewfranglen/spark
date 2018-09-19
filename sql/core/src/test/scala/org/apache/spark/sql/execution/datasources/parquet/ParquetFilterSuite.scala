@@ -30,6 +30,7 @@ import org.apache.spark.sql._
 import org.apache.spark.sql.catalyst.dsl.expressions._
 import org.apache.spark.sql.catalyst.expressions._
 import org.apache.spark.sql.catalyst.planning.PhysicalOperation
+import org.apache.spark.sql.catalyst.util.DateTimeUtils
 import org.apache.spark.sql.execution.datasources.{DataSourceStrategy, HadoopFsRelation, LogicalRelation}
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.internal.SQLConf
@@ -61,7 +62,8 @@ class ParquetFilterSuite extends QueryTest with ParquetTest with SharedSQLContex
   private lazy val parquetFilters =
     new ParquetFilters(conf.parquetFilterPushDownDate, conf.parquetFilterPushDownTimestamp,
       conf.parquetFilterPushDownDecimal, conf.parquetFilterPushDownStringStartWith,
-      conf.parquetFilterPushDownInFilterThreshold, conf.caseSensitiveAnalysis)
+      conf.parquetFilterPushDownInFilterThreshold, conf.caseSensitiveAnalysis,
+      DateTimeUtils.defaultTimeZone())
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -1035,7 +1037,7 @@ class ParquetFilterSuite extends QueryTest with ParquetTest with SharedSQLContex
     def createParquetFilter(caseSensitive: Boolean): ParquetFilters = {
       new ParquetFilters(conf.parquetFilterPushDownDate, conf.parquetFilterPushDownTimestamp,
         conf.parquetFilterPushDownDecimal, conf.parquetFilterPushDownStringStartWith,
-        conf.parquetFilterPushDownInFilterThreshold, caseSensitive)
+        conf.parquetFilterPushDownInFilterThreshold, caseSensitive, DateTimeUtils.defaultTimeZone())
     }
     val caseSensitiveParquetFilters = createParquetFilter(caseSensitive = true)
     val caseInsensitiveParquetFilters = createParquetFilter(caseSensitive = false)
