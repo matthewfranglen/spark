@@ -35,7 +35,7 @@ import org.apache.spark.network.util.TransportConf;
 public class ExternalShuffleCleanupSuite {
 
   // Same-thread Executor used to ensure cleanup happens synchronously in test thread.
-  private Executor sameThreadExecutor = MoreExecutors.sameThreadExecutor();
+  private Executor directExecutor = MoreExecutors.directExecutor();
   private TransportConf conf = new TransportConf("shuffle", MapConfigProvider.EMPTY);
   private static final String SORT_MANAGER = "org.apache.spark.shuffle.sort.SortShuffleManager";
 
@@ -44,7 +44,7 @@ public class ExternalShuffleCleanupSuite {
     TestShuffleDataContext dataContext = createSomeData();
 
     ExternalShuffleBlockResolver resolver =
-      new ExternalShuffleBlockResolver(conf, null, sameThreadExecutor);
+      new ExternalShuffleBlockResolver(conf, null, directExecutor);
     resolver.registerExecutor("app", "exec0", dataContext.createExecutorInfo(SORT_MANAGER));
     resolver.applicationRemoved("app", false /* cleanup */);
 
@@ -84,7 +84,7 @@ public class ExternalShuffleCleanupSuite {
     TestShuffleDataContext dataContext1 = createSomeData();
 
     ExternalShuffleBlockResolver resolver =
-      new ExternalShuffleBlockResolver(conf, null, sameThreadExecutor);
+      new ExternalShuffleBlockResolver(conf, null, directExecutor);
 
     resolver.registerExecutor("app", "exec0", dataContext0.createExecutorInfo(SORT_MANAGER));
     resolver.registerExecutor("app", "exec1", dataContext1.createExecutorInfo(SORT_MANAGER));
@@ -100,7 +100,7 @@ public class ExternalShuffleCleanupSuite {
     TestShuffleDataContext dataContext1 = createSomeData();
 
     ExternalShuffleBlockResolver resolver =
-      new ExternalShuffleBlockResolver(conf, null, sameThreadExecutor);
+      new ExternalShuffleBlockResolver(conf, null, directExecutor);
 
     resolver.registerExecutor("app-0", "exec0", dataContext0.createExecutorInfo(SORT_MANAGER));
     resolver.registerExecutor("app-1", "exec0", dataContext1.createExecutorInfo(SORT_MANAGER));

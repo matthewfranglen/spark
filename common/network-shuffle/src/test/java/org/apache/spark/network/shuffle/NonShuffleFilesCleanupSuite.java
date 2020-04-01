@@ -35,7 +35,7 @@ import org.apache.spark.network.util.TransportConf;
 public class NonShuffleFilesCleanupSuite {
 
   // Same-thread Executor used to ensure cleanup happens synchronously in test thread.
-  private Executor sameThreadExecutor = MoreExecutors.sameThreadExecutor();
+  private Executor directExecutor = MoreExecutors.directExecutor();
   private TransportConf conf = new TransportConf("shuffle", MapConfigProvider.EMPTY);
   private static final String SORT_MANAGER = "org.apache.spark.shuffle.sort.SortShuffleManager";
 
@@ -53,7 +53,7 @@ public class NonShuffleFilesCleanupSuite {
     TestShuffleDataContext dataContext = initDataContext(withShuffleFiles);
 
     ExternalShuffleBlockResolver resolver =
-      new ExternalShuffleBlockResolver(conf, null, sameThreadExecutor);
+      new ExternalShuffleBlockResolver(conf, null, directExecutor);
     resolver.registerExecutor("app", "exec0", dataContext.createExecutorInfo(SORT_MANAGER));
     resolver.executorRemoved("exec0", "app");
 
@@ -103,7 +103,7 @@ public class NonShuffleFilesCleanupSuite {
     TestShuffleDataContext dataContext1 = initDataContext(withShuffleFiles);
 
     ExternalShuffleBlockResolver resolver =
-      new ExternalShuffleBlockResolver(conf, null, sameThreadExecutor);
+      new ExternalShuffleBlockResolver(conf, null, directExecutor);
     resolver.registerExecutor("app", "exec0", dataContext0.createExecutorInfo(SORT_MANAGER));
     resolver.registerExecutor("app", "exec1", dataContext1.createExecutorInfo(SORT_MANAGER));
 
@@ -140,7 +140,7 @@ public class NonShuffleFilesCleanupSuite {
     TestShuffleDataContext dataContext = initDataContext(withShuffleFiles);
 
     ExternalShuffleBlockResolver resolver =
-      new ExternalShuffleBlockResolver(conf, null, sameThreadExecutor);
+      new ExternalShuffleBlockResolver(conf, null, directExecutor);
     resolver.registerExecutor("app", "exec0", dataContext.createExecutorInfo(SORT_MANAGER));
 
     resolver.executorRemoved("exec1", "app");
